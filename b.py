@@ -58,5 +58,6 @@ def callback_query(call):
     product_id = call.data
     product = products[product_id]
     bot.send_message(call.message.chat.id, f"* {product['name']} - {product['price']} тенге\n\n{product['description']}")
+    # Test
         
 bot.polling()
