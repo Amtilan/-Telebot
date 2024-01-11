@@ -40,6 +40,7 @@ products = {
 @bot.message_handler(commands=["start"])
 def start(message):
     bot.send_message(message.chat.id, "Добро пожаловать")
+    
 
 # Каталог
 @bot.message_handler(commands=["catalog"])
@@ -48,7 +49,6 @@ def catalog(message):
     for product_id, product in products.items():
         inline_keyboard.add(telebot.types.InlineKeyboardButton(text=product['name'], callback_data=product_id))
     bot.send_message(message.chat.id, "Вот наш каталог товаров:", reply_markup=inline_keyboard)
-    
 # Все продукты
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
@@ -85,16 +85,14 @@ def registration(message):
         bot.send_message(chat_id, f"Вы успешно зарегистрированы как {user_type}")
     elif user_type == 'продавец':
         # Регистрация продавца и предоставление выбора категории
-        markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-        calculus_button = telebot.types.KeyboardButton('калкулус 1')
-        Blya_button = telebot.types.KeyboardButton('бля')
-        Zhepa_button = telebot.types.KeyboardButton('жёпа')
-        markup.add(calculus_button, Blya_button)
-        markup.add(Zhepa_button)        
+        
+        keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+        for product in products:
+            keyboard.add(telebot.types.KeyboardButton(product['name']))
         telebot.types.ReplyKeyboardRemove
-        bot.send_message(message.chat.id, "Выберите категорию товаров:", reply_markup=markup)
+        bot.send_message(message.chat.id, "Выберите категорию товаров:", reply_markup=keyboard)
 
-@bot.message_handler(func=lambda message: message.text.lower() in ['калкулус 1', 'бля', 'жёпа'])
+@bot.message_handler(func=lambda message: message.text in ['калкулус 1', 'бля', 'жёпа'])
 def save_seller_category(message):
     chat_id = message.chat.id
     user_type = message.text.lower()
